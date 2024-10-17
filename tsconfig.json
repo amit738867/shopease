@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
+    ".expo/types/**/*.ts",
+    ".expo/types/**/*.js",
+    "expo-env.d.ts",
+    "expo-env.d.js",
+    "app/_layout.jsx",
+    "app/index.jsx",
+    "app/(apps)/LoadApp"
+  ],
+  "extends": "expo/tsconfig.base"
+}
