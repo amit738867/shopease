@@ -18,7 +18,8 @@
     "expo-env.d.js",
     "app/_layout.jsx",
     "app/index.jsx",
-    "app/(apps)/LoadApp"
+    "app/(apps)/LoadApp",
+    "nativewind-env.d.ts"
   ],
   "extends": "expo/tsconfig.base"
 }

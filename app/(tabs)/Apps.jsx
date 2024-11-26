@@ -1,83 +1,157 @@
+import { View, FlatList, Dimensions, Animated, Text, StyleSheet } from 'react-native';
+import React from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native';
+import { MaterialIcons } from '@expo/vector-icons';
+import AppComp from '@/components/AppComp';
+import CustomSearch from '@/components/CustomSearch';
+import StatusBar from '@/components/StatusBar';
+import appsData from '@/constants/AppData';
 
-// import { View, Text, FlatList, Dimensions, TouchableOpacity, Image, TextInput } from 'react-native'
-// import React from 'react'
-// import AppComp from '@/components/AppComp'
-// import images from '@/constants/images'
-// import icons from '@/constants/icons'
-// import { SafeAreaView } from 'react-native-safe-area-context'
-// import CustomSearch from '@/components/CustomSearch'
-// import BackButton from '@/components/BackButton'
-// import StatusBar from '@/components/StatusBar'
+const numColumns = 2;
+const { width } = Dimensions.get('window');
 
+const Apps = () => {
+  const scaleValue = React.useRef(new Animated.Value(0.8)).current;
+  const opacityValue = React.useRef(new Animated.Value(0)).current;
+  const translateYValue = React.useRef(new Animated.Value(50)).current;
 
-// const numColumns = 3;
+  const [searchQuery, setSearchQuery] = React.useState('');
 
-// const { width } = Dimensions.get('window');
+  const filteredApps = appsData.filter((item) =>
+    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-// const Apps = () => {
-//     const [searchQuery, setSearchQuery] = React.useState('');
+  useFocusEffect(
+    React.useCallback(() => {
+      // Reset animations
+      scaleValue.setValue(0.9);
+      opacityValue.setValue(0);
+      translateYValue.setValue(50);
 
-//     const appsData = [
-//         { name: "Flipkart", image: images.flipkart, link:"https://fktr.in/a7uZz6a"  },
-//         { name: "Amazon", image: images.amazon, link:"https://amzn.to/3zPnUcH"  },
-//         { name: "Ajio", image: images.ajio, link:"https://ajiio.in/8YbqKaJ"  },
-//         { name: "Myntra", image: images.myntra, link:"https://myntr.it/oIHS5Yq"  },
-//         { name: "Bewakoof", image: images.bewakoof, link:"https://www.bewakoof.com/"  },
-//         { name: "Meesho", image: images.meesho, link:"https://www.meesho.com/"  },
-//         { name: "Nykaa", image: images.nykaa, link:"https://bitli.in/EKvZ057"  },
-//         { name: "Nykaa Fashion", image: images.nykaafashion, link:"https://www.nykaafashion.com/"  },
-//         { name: "Nykaa Man", image: images.nykaaman, link:"https://www.nykaaman.com/"  },
-//         { name: "Shopsy", image: images.shopsy, link:"https://bitli.in/ncw1D2G"  },
-//         { name: "Snapdeal", image: images.snapdeal, link:"https://www.snapdeal.com/"  },
-//         { name: "Shopclues", image: images.shopclues, link:"https://www.shopclues.com/"  },
-//         { name: "JioMart", image: images.jiomart, link:"https://www.jiomart.com/"  },
-//         { name: "Tata Cliq", image: images.tatacliq, link:"https://www.tatacliq.com/"  },
-//         { name: "Mamaearth", image: images.mamaearth, link:"https://bitli.in/gnh5S20"  },
-//         { name: "Snitch", image: images.snitch, link:"https://www.snitch.co.in/"  },
-//         { name: "Croma", image: images.croma, link:"https://bitli.in/QpYHf48"  },
-        
+      // Enhanced combined animation
+      Animated.parallel([
+        Animated.spring(scaleValue, {
+          toValue: 1,
+          damping: 15,
+          mass: 1,
+          stiffness: 120,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacityValue, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.spring(translateYValue, {
+          toValue: 0,
+          damping: 12,
+          mass: 1,
+          stiffness: 100,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }, [])
+  );
 
-//     ];
+  return (
+    <Animated.View
+      style={[
+        styles.animatedView,
+        {
+          transform: [{ scale: scaleValue }, { translateY: translateYValue }],
+          opacity: opacityValue,
+        },
+      ]}
+    >
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar />
 
-//     const filteredApps = appsData.filter(item =>
-//         item.name.toLowerCase().includes(searchQuery.toLowerCase())
-//       );
+        {/* Header Section */}
+        <View style={styles.headerContainer}>
+          <View style={styles.headerBox}>
+            <View style={styles.headerContent}>
+              <MaterialIcons name="apps" size={24} color="#3b82f6" />
+              <Text style={styles.headerTitle}>All Applications</Text>
+            </View>
+            <Text style={styles.headerSubtitle}>
+              Quick access to your favorite apps
+            </Text>
+          </View>
+        </View>
 
-//     const handleSearch = (text) => {
-//       setSearchQuery(text);
-//     };
+        <CustomSearch
+          placeholder="Search for your favorite apps..."
+          otherStyles={{ marginBottom: 16 }} // Tailwind's mb-4
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
 
-//   return (
-//     <SafeAreaView className='w-full h-full bg-white mt-8'>
-      
-//     <StatusBar />
+        <FlatList
+          data={filteredApps}
+          renderItem={({ item, index }) => (
+            <AppComp
+              title={item.name}
+              source={item.image}
+              link={item.link}
+              index={index}
+            />
+          )}
+          keyExtractor={(item, index) => index.toString()}
+          numColumns={numColumns}
+          contentContainerStyle={styles.flatListContent}
+          columnWrapperStyle={styles.columnWrapper}
+          showsVerticalScrollIndicator={false}
+        />
+      </SafeAreaView>
+    </Animated.View>
+  );
+};
 
-//     <CustomSearch
-//       title="Search"
-//       placeholder="Search for apps"
-//       otherStyles=""
-//       value={searchQuery}
-//       onChangeText={handleSearch}
-//     />
-//     <FlatList
-      
-//       data={filteredApps}
-//       renderItem={({ item }) => (
-//         <AppComp title={item.name} source={item.image} link={item.link} />
-//       )}
-//       keyExtractor={(item, index) => index.toString()}
-//       numColumns={numColumns}
-//       contentContainerStyle={{
-//         paddingHorizontal: 15,
-//         paddingVertical: 20,
-//       }}
-//       columnWrapperStyle={{
-//         justifyContent: 'space-around',
-//         marginBottom: 10,
-//       }}
-//     />
-//   </SafeAreaView>
-//   )
-// }
+const styles = StyleSheet.create({
+  animatedView: {
+    flex: 1,
+    backgroundColor: '#ffffff', // bg-white
+  },
+  safeArea: {
+    flex: 1,
+  },
+  headerContainer: {
+    paddingHorizontal: 16, // px-4
+    marginBottom: 16, // mb-4
+  },
+  headerBox: {
+    backgroundColor: '#ebf8ff', // blue-50 to blue-100 gradient equivalent
+    padding: 16, // p-4
+    borderRadius: 16, // rounded-2xl
+    elevation: 2, // android:elevation-2
+    marginBottom: 16, // mb-4
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8, // mb-2
+  },
+  headerTitle: {
+    fontWeight: 'bold',
+    fontSize: 20, // text-xl
+    color: '#1f2937', // text-gray-800
+    marginLeft: 8, // ml-2
+  },
+  headerSubtitle: {
+    textAlign: 'center',
+    color: '#6b7280', // text-gray-600
+    fontSize: 14, // text-sm
+  },
+  flatListContent: {
+    paddingHorizontal: 16, // px-4
+    paddingBottom: 100, // pb-24
+  },
+  columnWrapper: {
+    justifyContent: 'space-between',
+    marginBottom: 16, // mb-4
+  },
+});
 
-// export default Apps
+export default Apps;

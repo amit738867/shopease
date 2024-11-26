@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
-
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from "react-native";
 
 const CustomText = ({
   title,
@@ -11,14 +10,14 @@ const CustomText = ({
   ...props
 }) => {
   const [showPassword, setShowPassword] = useState(false);
-// 
-  return (
-    <View className={`space-y-2 ${otherStyles}`}>
-      <Text className="text-base text-gray-100 font-pmedium">{title}</Text>
 
-      <View className="w-full bg-gray-200 h-16 px-4 rounded-2xl focus:border-secondary flex flex-row items-center">
+  return (
+    <View style={[styles.container, otherStyles]}>
+      <Text style={styles.title}>{title}</Text>
+
+      <View style={styles.inputContainer}>
         <TextInput
-          className="flex-1 text-black font-psemibold text-base"
+          style={styles.textInput}
           value={value}
           placeholder={placeholder}
           placeholderTextColor="#7B7B8B"
@@ -31,7 +30,7 @@ const CustomText = ({
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
             <Image
               source={!showPassword ? icons.eye : icons.eyeHide}
-              className="w-6 h-6"
+              style={styles.icon}
               resizeMode="contain"
             />
           </TouchableOpacity>
@@ -40,5 +39,35 @@ const CustomText = ({
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    gap: 8, // equivalent to space-y-2
+  },
+  title: {
+    fontSize: 16, // text-base
+    color: '#f3f4f6', // gray-100
+    fontFamily: 'Poppins-Medium', // font-pmedium
+  },
+  inputContainer: {
+    width: '100%', // w-full
+    backgroundColor: '#e5e7eb', // gray-200
+    height: 64, // h-16
+    paddingHorizontal: 16, // px-4
+    borderRadius: 16, // rounded-2xl
+    flexDirection: 'row', // flex-row
+    alignItems: 'center', // items-center
+  },
+  textInput: {
+    flex: 1, // flex-1
+    color: '#000000', // text-black
+    fontFamily: 'Poppins-SemiBold', // font-psemibold
+    fontSize: 16, // text-base
+  },
+  icon: {
+    width: 24, // w-6
+    height: 24, // h-6
+  },
+});
 
 export default CustomText;
